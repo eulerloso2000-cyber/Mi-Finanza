@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10251d">
+  <meta name="description" content="Control personal de ingresos, gastos y ahorro para tu próximo carro.">
+  <title>MI FINANZA</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">MF</div><div><strong>MI FINANZA</strong><small>Tu dinero, con propósito</small></div></div>
+    <button id="installBtn" class="button ghost" hidden>Instalar aplicación</button>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">MI GRAN OBJETIVO</p>
+        <h1>Mi primer carro <span>🚗</span></h1>
+        <p class="muted">Cada sol cuenta. Avanza a tu ritmo.</p>
+      </div>
+      <div class="goal-edit">
+        <label for="goalAmount">Meta de ahorro (S/)</label>
+        <input id="goalAmount" type="number" min="1" step="0.01" value="35000">
+        <button id="saveGoal" class="button light">Actualizar meta</button>
+      </div>
+      <div class="progress-area">
+        <div class="progress-label"><strong id="savedTotal">S/ 0.00</strong><span id="progressPercent">0%</span></div>
+        <div class="progress"><div id="progressBar"></div></div>
+        <small id="remaining">Te faltan S/ 35,000.00</small>
+      </div>
+    </section>
+
+    <section class="stats">
+      <article class="stat"><span class="stat-icon income">↗</span><div><small>Ingresos este mes</small><strong id="monthIncome">S/ 0.00</strong></div></article>
+      <article class="stat"><span class="stat-icon expense">↘</span><div><small>Gastos este mes</small><strong id="monthExpense">S/ 0.00</strong></div></article>
+      <article class="stat"><span class="stat-icon savings">◆</span><div><small>Ahorro acumulado</small><strong id="totalSavings">S/ 0.00</strong></div></article>
+      <article class="stat"><span class="stat-icon balance">＝</span><div><small>Balance del mes</small><strong id="monthBalance">S/ 0.00</strong></div></article>
+    </section>
+
+    <nav class="tabs" aria-label="Secciones">
+      <button class="tab active" data-tab="overview">Resumen</button>
+      <button class="tab" data-tab="transactions">Movimientos</button>
+      <button class="tab" data-tab="budget">Presupuesto</button>
+      <button class="tab" data-tab="backup">Copias de seguridad</button>
+    </nav>
+
+    <section id="overview" class="panel active">
+      <div class="section-heading"><div><p class="eyebrow">ACTIVIDAD</p><h2>Últimos movimientos</h2></div><button class="button primary" id="quickAdd">+ Registrar</button></div>
+      <div id="recentList" class="movement-list empty">Todavía no tienes movimientos. Registra tu primer ingreso, gasto o aporte de ahorro.</div>
+      <div class="note"><strong>Consejo:</strong> registra los movimientos cuando ocurran. Así tu balance reflejará mejor tu realidad.</div>
+    </section>
+
+    <section id="transactions" class="panel">
+      <div class="section-heading"><div><p class="eyebrow">REGISTRO</p><h2>Mis movimientos</h2></div></div>
+      <form id="transactionForm" class="form-card">
+        <div class="form-grid">
+          <label>Tipo
+            <select id="type">
+              <option value="income">Ingreso</option>
+              <option value="expense">Gasto</option>
+              <option value="saving">Aporte a ahorro</option>
+            </select>
+          </label>
+          <label>Importe (S/)
+            <input id="amount" type="number" min="0.01" step="0.01" placeholder="Ej. 100" required>
+          </label>
+          <label>Fecha
+            <input id="date" type="date" required>
+          </label>
+          <label>Categoría
+            <select id="category">
+              <option>Sueldo - quincena</option><option>Sueldo - fin de mes</option><option>Otros ingresos</option>
+              <option>Alimentación</option><option>Transporte</option><option>Deudas</option><option>Alquiler</option><option>Estudios</option><option>Apoyo familiar</option><option>Otros gastos</option>
+              <option>Ahorro para el carro</option><option>Fondo de emergencia</option>
+            </select>
+          </label>
+          <label class="full">Descripción (opcional)
+            <input id="description" type="text" maxlength="100" placeholder="Ej. Pago recibido o compra del día">
+          </label>
+        </div>
+        <button class="button primary" type="submit">Guardar movimiento</button>
+        <p id="formMessage" class="form-message" role="status"></p>
+      </form>
+      <div class="section-heading compact"><h3>Historial completo</h3><span id="movementCount" class="muted small">0 registros</span></div>
+      <div id="allList" class="movement-list empty">Aún no hay registros.</div>
+    </section>
+
+    <section id="budget" class="panel">
+      <div class="section-heading"><div><p class="eyebrow">PLAN MENSUAL</p><h2>Mi presupuesto</h2></div></div>
+      <div class="budget-summary">
+        <div><small>Ingreso mensual previsto</small><strong>S/ 1,550.00</strong></div>
+        <div><small>Pago quincenal previsto (40%)</small><strong>S/ 620.00</strong></div>
+        <div><small>Pago fin de mes previsto (60%)</small><strong>S/ 930.00</strong></div>
+      </div>
+      <p class="muted small">Distribución inicial basada en los datos que compartiste. Puedes cambiarla aquí cuando sea necesario.</p>
+      <form id="budgetForm" class="form-card">
+        <div class="form-grid">
+          <label>Ingreso mensual neto (S/)<input id="monthlyIncome" type="number" min="0" step="0.01" value="1550"></label>
+          <label>Porcentaje de quincena (%)<input id="firstPercent" type="number" min="0" max="100" value="40"></label>
+          <label>Alquiler (S/)<input id="rent" type="number" min="0" step="0.01" placeholder="Pendiente"></label>
+          <label>Estudios (S/)<input id="study" type="number" min="0" step="0.01" placeholder="Pendiente"></label>
+          <label>Alimentación (S/)<input id="food" type="number" min="0" step="0.01" value="200"></label>
+          <label>Transporte (S/)<input id="transport" type="number" min="0" step="0.01" value="100"></label>
+          <label>Apoyo familiar (S/)<input id="family" type="number" min="0" step="0.01" placeholder="Pendiente"></label>
+          <label>Deudas (S/)<input id="debt" type="number" min="0" step="0.01" value="180"></label>
+          <label>Otros gastos (S/)<input id="other" type="number" min="0" step="0.01" placeholder="Pendiente"></label>
+        </div>
+        <button class="button primary" type="submit">Guardar presupuesto</button>
+      </form>
+      <div class="budget-result">
+        <div><span>Gastos presupuestados conocidos</span><strong id="knownExpenses">S/ 480.00</strong></div>
+        <div><span>Disponible antes de completar pendientes</span><strong id="available">S/ 1,070.00</strong></div>
+        <p id="budgetWarning" class="muted small">Completa alquiler, estudios, apoyo familiar y otros gastos para conocer tu capacidad real de ahorro.</p>
+      </div>
+    </section>
+
+    <section id="backup" class="panel">
+      <div class="section-heading"><div><p class="eyebrow">TUS DATOS</p><h2>Copias de seguridad</h2></div></div>
+      <div class="note"><strong>Importante:</strong> en esta versión los datos se guardan en el navegador del dispositivo. No se sincronizan automáticamente entre celular y computadora. Exporta una copia en un dispositivo e impórtala en el otro para transferir tus registros.</div>
+      <div class="backup-actions">
+        <button id="exportBtn" class="button primary">Descargar copia de seguridad</button>
+        <label class="button secondary file-button">Importar copia JSON<input id="importFile" type="file" accept="application/json,.json" hidden></label>
+        <button id="clearBtn" class="button danger">Borrar todos mis datos</button>
+      </div>
+      <p class="muted small">Consejo de privacidad: utiliza un dispositivo protegido con bloqueo de pantalla y no compartas tus copias de seguridad.</p>
+    </section>
+
+    <footer>MI FINANZA · Versión inicial · Tus datos permanecen en este dispositivo.</footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
